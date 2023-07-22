@@ -2,6 +2,7 @@
 const User = require("../model/user");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const jwt = require("jsonwebtoken");
 
 module.exports.signUp = async (req, res) => {
   try {
@@ -73,9 +74,12 @@ module.exports.signIn = async (req, res) => {
         data: [],
       });
     }
+    const token = jwt.sign({ email: user.email }, "secretkey", {
+      expiresIn: "1h",
+    });
     return res.status(200).json({
       message: "User logged in sucessfully!!",
-      data: {},
+      data: { token },
     });
   } catch (err) {
     return res.status(500).json({
